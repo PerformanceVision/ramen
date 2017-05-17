@@ -76,12 +76,11 @@ let register_file_reader filename ppp k =
      * for CSV *)
     let stream = Lwt_io.read_lines chan in
     let%lwt () = Lwt_stream.iter_s (fun line ->
-      (* FIXME: wouldn't it be nice if PPP_CSV.tuple was not depending on this "\n"? *)
-      match PPP.of_string ppp (line ^"\n") 0 with
+      match PPP.of_string ppp line 0 with
       | exception e ->
         Printf.eprintf "Exception %s!\n%!" (Printexc.to_string e) ;
         return_unit
-      | Some (e, l) when l = String.length line + 1 ->
+      | Some (e, l) when l = String.length line ->
           k e
       | _ ->
           Printf.eprintf "Cannot parse line %S\n%!" line ;
